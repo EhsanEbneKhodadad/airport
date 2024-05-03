@@ -5,6 +5,8 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import DatePickerCom from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 interface SelectDropDownProps<TFieldValues extends FieldValues> {
   title: string;
@@ -38,6 +40,8 @@ export const DatePicker = <T extends FieldValues>({
             placeholder={placeholder}
             onChange={onChange}
             value={value}
+            calendar={persian}
+            locale={persian_fa}
           />
         )}
       />

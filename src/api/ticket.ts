@@ -15,11 +15,71 @@ export interface ITicketBody {
   Routes: IRoute[];
 }
 
-export const getTickets = async (body: ITicketBody) => {
+export interface ITicketRequest {
+  Flights: IFlight[];
+  Meta: string;
+}
+
+export interface IFlight {
+  AutomaticReserve: boolean;
+  Id: string;
+  Prices: IPrice[];
+  Segments: ISegment[];
+  UnchangeableInfCount: boolean;
+}
+
+export interface IPrice {
+  PassengerFares: IPassengerFares[];
+}
+
+export interface IPassengerFares {
+  Discount: Number;
+  DiscountPercent: number;
+  PaxType: "ADL" | "CHD" | "INF";
+  SpecialDiscountAllowed: boolean;
+  TotalFare: number;
+}
+
+export interface ISegment {
+  ConnectionTime: string;
+  Legs: ILeg[];
+}
+
+export interface ILeg {
+  Origin: string;
+  OriginAirport: string;
+  DepartureTime: string;
+  Destination: string;
+  DestinationAirport: string;
+  ArrivalTime: string;
+  Airline: IAirline;
+}
+
+export interface IAirline {
+  EnglishTitle: string;
+  IataCode: string;
+  Logo: string;
+  PersianTitle: string;
+  Title: string;
+}
+
+export interface ISaveInfo {
+  info: string;
+}
+
+export const getTickets = async (
+  body: ITicketBody
+): Promise<ITicketRequest> => {
   const response = await axios.post(
     process.env.NEXT_PUBLIC_TICKET_URL ?? "",
     body
   );
+
+  return response.data;
+};
+
+export const saveInfo = async (body: ISaveInfo): Promise<any> => {
+  const response = await axios.post("/api/save-data", body);
 
   return response.data;
 };

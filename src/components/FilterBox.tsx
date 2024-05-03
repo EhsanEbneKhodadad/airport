@@ -4,9 +4,12 @@ import { SelectController } from "./DropDown";
 import { DatePicker } from "./DatePicker";
 import { cities } from "@/staticData/city";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { IOption } from "@/types/IShared";
+import { DateObject } from "react-multi-date-picker";
+import gregorian from "react-date-object/calendars/gregorian";
+import gregorian_en from "react-date-object/locales/gregorian_en";
 
 type Form = {
   source: IOption;
@@ -21,29 +24,58 @@ export const FilterBox = () => {
   const searchParams = useSearchParams();
   const formProps = useForm<Form>();
 
-  const { handleSubmit } = formProps;
+  const { handleSubmit, reset } = formProps;
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
+  // const createQueryString = useCallback(
+  //   (name: string, value: string) => {
+  //     const params = new URLSearchParams(searchParams.toString());
+  //     params.set(name, value);
 
-      return params.toString();
-    },
-    [searchParams]
-  );
+  //     return params.toString();
+  //   },
+  //   [searchParams]
+  // );
+
+  useEffect(() => {
+    const source = searchParams.get("source") ?? "";
+    const sourceResult = cities.find((item) => item.value === source);
+
+    const destination = searchParams.get("destination") ?? "";
+    const destinationResult = cities.find((item) => item.value === destination);
+
+    const departureDate = searchParams.get("departureDate") ?? "";
+    const returnDate = searchParams.get("returnDate") ?? "";
+
+    if (sourceResult && destinationResult && departureDate && returnDate) {
+      reset({
+        source: { label: sourceResult?.label, value: sourceResult?.value },
+        destination: {
+          label: destinationResult?.label,
+          value: destinationResult?.value,
+        },
+        departureDate: new Date(departureDate),
+        returnDate: new Date(returnDate),
+      });
+    }
+  }, [reset, searchParams]);
 
   const btnSubmit = (data: Form) => {
     const { source, destination, departureDate, passengers, returnDate } = data;
-    console.log({ source, departureDate });
+
+    const departureDateRes = new DateObject(departureDate)
+      .convert(gregorian, gregorian_en)
+      .format("YYYY-MM-DD");
+    const returnDateRes = new DateObject(returnDate)
+      .convert(gregorian, gregorian_en)
+      .format("YYYY-MM-DD");
 
     push({
       pathname: "/ticket",
       query: {
         source: source.value,
         destination: destination.value,
-        departureDate: departureDate.toString(),
-        returnDate: returnDate.toString(),
+        departureDate: departureDateRes,
+        returnDate: returnDateRes,
       },
     });
   };
@@ -51,7 +83,7 @@ export const FilterBox = () => {
   return (
     <form
       onSubmit={handleSubmit(btnSubmit)}
-      className="w-full rounded-md bg-white shadow-lg p-6 grid md:grid-cols-3 xl:grid-cols-6 gap-8"
+      className="w-full rounded-md bg-white shadow-lg p-6 grid md:grid-cols-3 xl:grid-cols-5 gap-8"
     >
       <SelectController
         title="مبدا"
@@ -82,13 +114,13 @@ export const FilterBox = () => {
         fieldName="returnDate"
         placeholder="تاریخ برگشت"
       />
-      <SelectController
+      {/* <SelectController
         title="تعداد مسافر"
         formProps={formProps}
         fieldName="passengers"
         placeholder="تعداد مسافر"
         options={[]}
-      />
+      /> */}
       <div className="w-full h-full flex items-end">
         <Button title="جست و جو" type="submit" className="h-[38px] w-full" />
       </div>

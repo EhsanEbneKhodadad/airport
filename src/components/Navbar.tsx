@@ -12,7 +12,7 @@ export const Navbar = () => {
           <h1 className="font-bold text-2xl">مستر بلیط</h1>
           <p className="text-[10px]">بلیط هواپیما و رزرو هتل</p>
         </div>
-        <div>menu</div>
+        {/* <div>menu</div> */}
       </div>
 
       <div className="flex justify-between">
