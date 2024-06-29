@@ -57,7 +57,7 @@ export const FilterBox = () => {
         returnDate: new Date(returnDate),
       });
     }
-  }, [reset, searchParams]);
+  }, [searchParams]);
 
   const btnSubmit = (data: Form) => {
     const { source, destination, departureDate, passengers, returnDate } = data;
