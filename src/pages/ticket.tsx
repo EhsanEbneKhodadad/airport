@@ -56,7 +56,7 @@ const TicketPage = () => {
 
       mutate({ info: JSON.stringify(data) });
     }
-  }, [data, mutate]);
+  }, [data]);
 
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between`}>
